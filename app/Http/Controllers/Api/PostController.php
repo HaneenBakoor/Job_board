@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $post = Post::all();
+        $post = Post::paginate(5);
         return response()->json($post);
     }
 
@@ -21,11 +20,13 @@ class PostController extends Controller
     {
         try {
             Post::create([
-                'title' => 'post1',
-                'body' => 'hello',
-                'published' => '1'
+                // $request->all()
+                'title' => $request->title,
+                'body' => $request->body,
+                'auther'=>$request->auther,
+                'published' =>$request->published
             ]);
-            return response()->json("created siccessfully");
+            return response();
         } catch (\Exception $e) {
             return response()->json($e);
         }
@@ -34,15 +35,28 @@ class PostController extends Controller
     public function show(string $id)
     {
         $post = Post::findorfail($id);
+        if(!$post){
+        return response(['message'=>'post not found'],404);
+        }
         return response()->json($post);
     }
 
-    public function update(Request $request, string $id) {}
+    public function update(Request $request, string $id) {
+        $post=Post::find($id);
+         if(!$post){
+        return response(['message'=>'post not found'],404);
+        }
+        $post->update($request->all());
+        return response($post,200);
+    }
 
 
     public function destroy(string $id)
-    {
-        if (Post::destroy($id))
-            return response()->json("deleting successfully");
+    { $post=Post::find($id);
+         if(!$post){
+        return response(['message'=>'post not found'],404);
+        }
+        $post->delete();
+            return response(['message'=>'post has benn deleted'],200);
     }
 }
