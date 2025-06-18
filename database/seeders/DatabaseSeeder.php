@@ -30,5 +30,10 @@ class DatabaseSeeder extends Seeder
 
 // Create multiple posts
 // $posts = \App\Models\Post::factory()->count(10)->create();
+ $this->call([
+        UserSeeder::class,
+        PostSeeder::class,
+        CommentSeeder::class,
+    ]);
     }
 }

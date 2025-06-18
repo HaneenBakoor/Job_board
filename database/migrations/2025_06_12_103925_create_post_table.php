@@ -13,14 +13,14 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('title');
-            $table->string('body');
+            $table->text('body');
             $table->string('auther');
 
             $table->boolean('published');
             $table->timestamps();
         });
     }
-
+ 
 
     public function down(): void
     {
