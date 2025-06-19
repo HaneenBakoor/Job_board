@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -39,28 +40,27 @@ class PostController extends Controller
                 'auther' => $request->input('auther'),
                 'published' => $request->has('published')
             ]);
+            if($post)
             return response(['message' => 'successfully', 'data' => $post, 'code' => '200']);
         } catch (\Exception $e) {
             return response()->json($e);
         }
     }
 
-    public function show(string $id)
+    public function show(Post $post)
     {
-        $post = Post::findorfail($id);
-        if (!$post) {
-            return response(['message' => 'post not found'], 404);
-        }
+        // $post = Post::findorfail($id);
+        // if (!$post) {
+        //     return response(['message' => 'post not found'], 404);
+        // }
         return response()->json($post);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
-        $post = Post::findorfail($id);
-        if (!$post) {
-            return response(['message' => 'post not found'], 404);
-        }
-        // $post->update($request->all());
+        // $post = Post::findorfail($id);
+        // Gate::authorize('update',$post);
+
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->auther = $request->input('auther');
@@ -71,13 +71,11 @@ class PostController extends Controller
 
 
 
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
-        $post = Post::findorfail($id);
-        if (!$post) {
-            return response(['message' => 'post not found'], 404);
-        }
+        // $post = Post::findorfail($id);
+
         $post->delete();
-        return response(['message' => 'post has benn deleted'], 200);
+        return response(['message' => 'post has been deleted'], 200);
     }
 }
