@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\PostController;
 // Route::middleware('auth:api')->group(function(){
 
 // });
-Route::post('/posts/create',[PostController::class, 'store']);
 
 Route::post('/login',[AuthController::class, 'Login']);
 Route::post('/signup',[AuthController::class, 'Signup']);
@@ -21,8 +20,10 @@ Route::get('/me',[AuthController::class, 'me'])->middleware('auth:api');
 Route::post('/logout',[AuthController::class, 'logout'])->middleware('auth:api');
 
 
-Route::middleware(['role:editor,admin'])->group(function(){
+Route::middleware(['auth:api','role:editor,admin'])->group(function(){
 Route::patch('/posts/{post}/update',[PostController::class, 'update'])->can('update','Post');
+Route::post('/posts/create',[PostController::class, 'store']);
+
 });
 //admin
 Route::middleware('role:admin')->group(function(){

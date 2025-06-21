@@ -16,14 +16,14 @@ class RoleMiddelware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (auth()->check()) {
-            $role = auth()->user()->role;
-            $hasAccess = in_array($role, $roles);
-            if (!$hasAccess) {
-                return abort(403);
-            }
-        }
-        return $next($request);
+        $user = auth('api')->user();
 
+        if (!$user || !in_array($user->role, $roles)) {
+            return response()->json([
+                'message' => 'Forbidden: You do not have the required role.'
+            ], 403);
+        }
+
+        return $next($request);
     }
 }
